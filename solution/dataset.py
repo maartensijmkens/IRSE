@@ -1,7 +1,9 @@
 import csv
 import os
 import torch
-from torch.utils.data import Dataset, DataLoader, random_split
+from torch.utils.data import Dataset, DataLoader
+from torchtext.vocab import FastText
+from nltk.tokenize import word_tokenize
 
 class NUS(Dataset):
     def __init__(self, mode, root='NUS-WIDE-Lite/'):
@@ -11,6 +13,9 @@ class NUS(Dataset):
         
         self.mode = mode
         self.root = root
+        
+        # Fasttext embeddings
+        self.text_embedding = FastText('simple')
         
         # Find all the image categories
         self.unique_categories = self.get_categories()
@@ -32,8 +37,9 @@ class NUS(Dataset):
     def __getitem__(self, index):
         # Take the filename.
         filename = self.filenames[index]
-        
-        return self.image_features[filename], self.captions[filename.split('_')[1]], self.groundtruth[index], index
+        caption_embeddings = self.create_fasttext_embeddings(self.captions[filename.split('_')[1]])
+
+        return self.image_features[filename], caption_embeddings, self.groundtruth[index], index
 
     
     def get_categories(self):
@@ -123,3 +129,13 @@ class NUS(Dataset):
                         image_features.append(torch.tensor([float(elem) for elem in line]))
         image_dict = {image_names[i]: features for i, features in enumerate(image_features)}
         return image_dict
+    
+    def create_fasttext_embeddings(self, caption):
+        # Tokenize the caption.
+        tokens = word_tokenize(caption)   
+        word_feats = self.text_embedding.get_vecs_by_tokens(tokens)
+        # Take the mean embedding vector as the caption representation.
+        caption_emb = torch.mean(word_feats, 0)
+        # Alternatively, you can take the summation.
+        #caption_emb = torch.sum(word_feats, 0)
+        return caption_emb
