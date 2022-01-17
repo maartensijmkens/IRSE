@@ -21,7 +21,7 @@ python dataset_saver.py
 
 ## Training
 
-Train a model and save the experiment with the given name 
+Train a model and save the experiment with the a name of choice
 (e.g. "my-experiment"). The model's weights and other relevant information 
 of your experiment will be saved in `exp/my-experiment/`.
 
@@ -40,8 +40,9 @@ python test.py --exp "my-experiment"
 
 ## Retrieval
 
-Retrieve 10 most relevant images for a given query string 
-(e.g. "yellow flower") with your trained model:
+Retrieve the 10 most relevant images for a given query string 
+(e.g. "yellow flower") with your trained model. Make sure to first run the
+testing script.
 
 ```
 python retrieve.py "yellow flower" --exp "my-experiment"
