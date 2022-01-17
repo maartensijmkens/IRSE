@@ -21,7 +21,7 @@ python dataset_saver.py
 
 ## Training
 
-Train a model and save the experiment with the a name of choice
+Train a model and save the experiment with a name of choice
 (e.g. "my-experiment"). The model's weights and other relevant information 
 of your experiment will be saved in `exp/my-experiment/`.
 
